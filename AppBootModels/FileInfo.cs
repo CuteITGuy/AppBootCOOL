@@ -125,7 +125,7 @@ namespace AppBootModels
             var mainUri = new Uri(mainDirectory);
             return Uri.UnescapeDataString(rootUri.MakeRelativeUri(mainUri).ToString().Replace("/", "\\"));
         }
-        private static FileVersion GetVersion(string filePath)
+        public static FileVersion GetFileVersion(string filePath)
         {
             var fileVersionInfo = FileVersionInfo.GetVersionInfo(filePath);
             return new FileVersion(fileVersionInfo.FileVersion);
@@ -136,7 +136,7 @@ namespace AppBootModels
             Name = Path.GetFileName(filePath);
             Extension = Path.GetExtension(filePath);
             Directory = GetRelativePath(appFolder, Path.GetDirectoryName(filePath)); //UNDONE
-            Version = GetVersion(filePath);
+            Version = GetFileVersion(filePath);
         }
         #endregion
 

@@ -6,6 +6,7 @@ namespace AppBootModels
 {
     [TypeConverter(typeof(FileVersionConverter))]
     public class FileVersion
+        : IEquatable<FileVersion>, IEquatable<Version>, IComparable<FileVersion>, IComparable<Version>
     {
         #region  Constructors & Destructor
         public FileVersion(int build, int major, int minor, int revision)
@@ -32,6 +33,8 @@ namespace AppBootModels
 
         #region  Properties & Indexers
         public int? Build { get; set; }
+
+        public bool HasVersion => Major.HasValue && Minor.HasValue;
         public int? Major { get; set; }
         public int? Minor { get; set; }
         public int? Revision { get; set; }
@@ -54,6 +57,30 @@ namespace AppBootModels
                 Build = value.Build;
                 Revision = value.Revision;
             }
+        }
+        #endregion
+
+
+        #region Methods
+        public int CompareTo(FileVersion other)
+        {
+            return CompareTo(other.Version);
+        }
+
+        public int CompareTo(Version other)
+        {
+            if (!HasVersion) throw new InvalidOperationException();
+            return Version.CompareTo(other);
+        }
+
+        public bool Equals(FileVersion other)
+        {
+            return Equals(other.Version);
+        }
+
+        public bool Equals(Version other)
+        {
+            return Equals(Version, other);
         }
         #endregion
 

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -14,27 +13,25 @@ namespace AppBootViewModels
         #region Fields
         private ICommand _addFilesCommand;
         private ApplicationInfo _application;
+        private int _applicationId;
         private bool _canAddFiles;
         private ICollection<FileInfo> _files;
         #endregion
 
 
         #region  Properties & Indexers
-        private int _applicationId;
-
-        public int ApplicationId
-        {
-            get { return _applicationId; }
-            set { SetProperty(ref _applicationId, value); }
-        }
-
-        
         public ICommand AddFilesCommand => GetCommand(ref _addFilesCommand, _ => AddFiles(), _ => CanAddFiles);
 
         public ApplicationInfo Application
         {
             get { return _application; }
             private set { SetProperty(ref _application, value); }
+        }
+
+        public int ApplicationId
+        {
+            get { return _applicationId; }
+            set { SetProperty(ref _applicationId, value); }
         }
 
         public bool CanAddFiles
@@ -72,14 +69,13 @@ namespace AppBootViewModels
         {
             SetEnability(false);
             Application = await _context.Applications.FindAsync(ApplicationId);
-            await Task.Run(() => Files = new ObservableCollection<FileInfo>(Application.Files.ToList()));
+            await Task.Run(() => Files = Application.Files.ToList());
             SetEnability(true);
         }
 
         protected override async Task SaveAsync()
         {
             SetEnability(false);
-            //Application.SetFiles(Files);
             await _context.SaveChangesAsync();
             SetEnability(true);
         }
@@ -97,8 +93,12 @@ namespace AppBootViewModels
         {
             foreach (var fileName in fileNames)
             {
-                Application.Files.Add(new FileInfo(fileName, Application.Directory));
-                Files = new ObservableCollection<FileInfo>(Application.Files.ToList());
+                Application.Files.Add(new FileInfo(fileName, Application.Directory)
+                {
+                    FileData = new FileData(fileName)
+                });
+
+                Files = Application.Files.ToList();
             }
         }
         #endregion

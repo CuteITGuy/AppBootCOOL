@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using CB.Model.Common;
 
@@ -15,6 +16,18 @@ namespace AppBootModels
         private int? _id;
         private DateTime? _modifiedOn;
         private string _name;
+        #endregion
+
+
+        #region  Constructors & Destructor
+        public ApplicationInfo() { }
+
+        public ApplicationInfo(string folderPath)
+        {
+            if (!System.IO.Directory.Exists(folderPath)) throw new DirectoryNotFoundException();
+            Name = Path.GetFileName(folderPath);
+            Directory = folderPath;
+        }
         #endregion
 
 

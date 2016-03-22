@@ -20,6 +20,7 @@ namespace AppMasterCOOL
         {
             var application = datMain.SelectedItem as ApplicationInfo;
             var appUpdater = new AppUpdaterCOOL.MainWindow();
+            if(application?.Id == null) return;
             var appUpdaterViewModel = new AppUpdaterViewModel { ApplicationId = application.Id.Value };
             appUpdater.DataContext = appUpdaterViewModel;
             appUpdater.ShowDialog();

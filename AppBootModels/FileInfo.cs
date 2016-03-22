@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
-using System.Security.Cryptography;
 using CB.Model.Common;
 
 
@@ -13,17 +12,21 @@ namespace AppBootModels
         private ApplicationInfo _application;
         private int _applicationId;
         private DateTime? _createdOn;
-        private byte[] _data;
         private string _description;
         private string _directory;
         private string _extension;
-        private byte[] _hash;
+        private FileData _fileData;
         private int? _id;
         private bool _isInit;
         private DateTime? _modifiedOn;
         private string _name;
-        private int _size;
-        private string _version;
+
+        /*public string Version
+        {
+            get { return _version; }
+            set { SetProperty(ref _version, value); }
+        }*/
+        private FileVersion _version = new FileVersion();
         #endregion
 
 
@@ -32,7 +35,7 @@ namespace AppBootModels
 
         public FileInfo(string filePath, string appFolder)
         {
-            if (!File.Exists(filePath)) throw new IOException(nameof(filePath));
+            if (!File.Exists(filePath)) throw new FileNotFoundException("File not found", filePath);
             SetDataFrom(filePath, appFolder);
         }
         #endregion
@@ -57,12 +60,6 @@ namespace AppBootModels
             set { SetProperty(ref _createdOn, value); }
         }
 
-        public byte[] Data
-        {
-            get { return _data; }
-            set { SetProperty(ref _data, value); }
-        }
-
         public string Description
         {
             get { return _description; }
@@ -81,10 +78,10 @@ namespace AppBootModels
             set { SetProperty(ref _extension, value); }
         }
 
-        public byte[] Hash
+        public FileData FileData
         {
-            get { return _hash; }
-            set { SetProperty(ref _hash, value); }
+            get { return _fileData; }
+            set { SetProperty(ref _fileData, value); }
         }
 
         public int? Id
@@ -111,13 +108,7 @@ namespace AppBootModels
             set { SetProperty(ref _name, value); }
         }
 
-        public int Size
-        {
-            get { return _size; }
-            set { SetProperty(ref _size, value); }
-        }
-
-        public string Version
+        public FileVersion Version
         {
             get { return _version; }
             set { SetProperty(ref _version, value); }
@@ -126,30 +117,30 @@ namespace AppBootModels
 
 
         #region Implementation
-        private static byte[] ComputeHash(byte[] data)
+        private static string GetRelativePath(string rootDirectory, string mainDirectory)
         {
-            using (var md5 = MD5.Create())
-            {
-                return md5.ComputeHash(data);
-            }
+            if (!rootDirectory.EndsWith("\\")) rootDirectory += "\\";
+            if (!mainDirectory.EndsWith("\\")) mainDirectory += "\\";
+            var rootUri = new Uri(rootDirectory);
+            var mainUri = new Uri(mainDirectory);
+            return Uri.UnescapeDataString(rootUri.MakeRelativeUri(mainUri).ToString().Replace("/", "\\"));
         }
-
-        private static string GetVersion(string filePath)
+        private static FileVersion GetVersion(string filePath)
         {
             var fileVersionInfo = FileVersionInfo.GetVersionInfo(filePath);
-            return fileVersionInfo.FileVersion;
+            return new FileVersion(fileVersionInfo.FileVersion);
         }
 
         private void SetDataFrom(string filePath, string appFolder)
         {
             Name = Path.GetFileName(filePath);
             Extension = Path.GetExtension(filePath);
-            Directory = Path.GetDirectoryName(filePath); //UNDONE
-            Data = File.ReadAllBytes(filePath);
-            Hash = ComputeHash(Data);
-            Size = (int)new System.IO.FileInfo(filePath).Length;
+            Directory = GetRelativePath(appFolder, Path.GetDirectoryName(filePath)); //UNDONE
             Version = GetVersion(filePath);
         }
         #endregion
+
+
+        //private string _version;
     }
 }

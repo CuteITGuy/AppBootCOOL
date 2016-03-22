@@ -13,7 +13,8 @@ namespace AppBootContexts
 
         #region  Properties & Indexers
         public DbSet<ApplicationInfo> Applications { get; set; }
-        public DbSet<FileInfo> Files { get; set; }
+        public DbSet<FileData> FileDatas { get; set; }
+        public DbSet<FileInfo> FileInfos { get; set; }
         #endregion
 
 
@@ -23,6 +24,8 @@ namespace AppBootContexts
             base.OnModelCreating(modelBuilder);
             modelBuilder.Configurations.Add(new ApplicationInfoMap());
             modelBuilder.Configurations.Add(new FileInfoMap());
+            modelBuilder.Configurations.Add(new FileDataMap());
+            modelBuilder.Configurations.Add(new FileVersionMap());
         }
         #endregion
     }

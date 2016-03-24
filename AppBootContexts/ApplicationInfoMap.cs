@@ -18,7 +18,7 @@ namespace AppBootContexts
             Property(p => p.CreatedOn).HasColumnOrder(4);
             Property(p => p.ModifiedOn).HasColumnOrder(5);
 
-            HasMany(a => a.Files).WithRequired().HasForeignKey(f => f.ApplicationId).WillCascadeOnDelete();
+            HasMany(a => a.Files).WithRequired(f => f.Application).HasForeignKey(f => f.ApplicationId).WillCascadeOnDelete();
         }
         #endregion
     }

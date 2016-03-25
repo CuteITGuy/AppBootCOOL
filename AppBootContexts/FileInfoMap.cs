@@ -15,8 +15,6 @@ namespace AppBootContexts
             Property(p => p.Name).HasColumnOrder(70).HasMaxLength(128).IsUnicode(false).IsRequired();
             Property(p => p.Directory).HasColumnOrder(90).HasMaxLength(512).IsUnicode(false).IsRequired();
             Property(p => p.Extension).HasColumnOrder(110).HasMaxLength(8).IsUnicode(false).IsRequired();
-
-            //Property(p => p.Version).HasColumnOrder(130).HasMaxLength(16).IsUnicode(false);
             Property(p => p.Version.Major).HasColumnOrder(130);
             Property(p => p.Version.Minor).HasColumnOrder(150);
             Property(p => p.Version.Build).HasColumnOrder(170);
@@ -25,10 +23,37 @@ namespace AppBootContexts
             Property(p => p.IsInit).HasColumnOrder(230);
             Property(p => p.CreatedOn).HasColumnOrder(250);
             Property(p => p.ModifiedOn).HasColumnOrder(270);
+            Property(p => p.ApplicationId).HasColumnOrder(290);
 
-            //HasRequired(f => f.Application).WithMany(a => a.Files).HasForeignKey(f => f.ApplicationId).WillCascadeOnDelete();
-
-            MapToStoredProcedures(s=>s.Insert())
+            MapToStoredProcedures(
+                s =>
+                {
+                    s.Insert(i => i.HasName("InsertFileInfo", "dbo")
+                                   .Parameter(f => f.Name, "Name")
+                                   .Parameter(f => f.Directory, "Directory")
+                                   .Parameter(f => f.Extension, "Extension")
+                                   .Parameter(f => f.Description, "Description")
+                                   .Parameter(f => f.IsInit, "IsInit")
+                                   .Parameter(f => f.ApplicationId, "ApplicationId")
+                                   .Parameter(f => f.Version.Major, "MajorVersion")
+                                   .Parameter(f => f.Version.Minor, "MinorVersion")
+                                   .Parameter(f => f.Version.Build, "BuildVersion")
+                                   .Parameter(f => f.Version.Revision, "RevisionVersion"));
+                    s.Update(u => u.HasName("UpdateFileInfo", "dbo")
+                                   .Parameter(f => f.Id, "Id")
+                                   .Parameter(f => f.Name, "Name")
+                                   .Parameter(f => f.Directory, "Directory")
+                                   .Parameter(f => f.Extension, "Extension")
+                                   .Parameter(f => f.Description, "Description")
+                                   .Parameter(f => f.IsInit, "IsInit")
+                                   .Parameter(f => f.ApplicationId, "ApplicationId")
+                                   .Parameter(f => f.Version.Major, "MajorVersion")
+                                   .Parameter(f => f.Version.Minor, "MinorVersion")
+                                   .Parameter(f => f.Version.Build, "BuildVersion")
+                                   .Parameter(f => f.Version.Revision, "RevisionVersion"));
+                    s.Delete(d => d.HasName("DeleteFileInfo", "dbo")
+                                   .Parameter(f => f.Id, "Id"));
+                });
         }
         #endregion
     }

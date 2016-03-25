@@ -51,7 +51,7 @@ namespace AppBootViewModels
             {
                 var appId = GetAppId();
                 var app = await _context.Applications.FindAsync(appId);
-                foreach (var fileInfo in _context.Entry() app.Files.AsEnumerable().Where(IsUpdated))
+                foreach (var fileInfo in app.Files.AsEnumerable().Where(IsUpdated))
                 {
                     FileUpdates.Add(new FileUpdate { Info = fileInfo, State = UpdateState.Pending });
                 }

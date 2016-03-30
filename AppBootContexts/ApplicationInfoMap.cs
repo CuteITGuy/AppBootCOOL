@@ -18,7 +18,23 @@ namespace AppBootContexts
             Property(p => p.CreatedOn).HasColumnOrder(4);
             Property(p => p.ModifiedOn).HasColumnOrder(5);
 
-            HasMany(a => a.Files).WithRequired(f => f.Application).HasForeignKey(f => f.ApplicationId).WillCascadeOnDelete();
+            HasMany(a => a.Files).WithRequired(f => f.Application).HasForeignKey(f => f.ApplicationId)
+                                 .WillCascadeOnDelete();
+
+            MapToStoredProcedures(s =>
+            {
+                s.Insert(i => i.HasName("InsertApplication")
+                               .Parameter(a => a.Name, "Name")
+                               .Parameter(a => a.Directory, "Directory")
+                               .Parameter(a => a.Description, "Description"));
+                s.Update(u => u.HasName("UpdateApplication")
+                               .Parameter(a => a.Id, "Id")
+                               .Parameter(a => a.Name, "Name")
+                               .Parameter(a => a.Directory, "Directory")
+                               .Parameter(a => a.Description, "Description"));
+                s.Delete(d => d.HasName("DeleteApplication")
+                               .Parameter(a => a.Id, "Id"));
+            });
         }
         #endregion
     }

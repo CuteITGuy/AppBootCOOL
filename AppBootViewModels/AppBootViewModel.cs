@@ -17,8 +17,6 @@ namespace AppBootViewModels
         private const string CHECKING = "Check for updates...";
         private const string UPDATING = "Updating...";
         private ICollection<FileUpdate> _fileUpdates = new ObservableCollection<FileUpdate>();
-        private double _progress;
-        private string _state;
         #endregion
 
 
@@ -27,18 +25,6 @@ namespace AppBootViewModels
         {
             get { return _fileUpdates; }
             private set { SetProperty(ref _fileUpdates, value); }
-        }
-
-        public double Progress
-        {
-            get { return _progress; }
-            private set { SetProperty(ref _progress, value); }
-        }
-
-        public string State
-        {
-            get { return _state; }
-            private set { SetProperty(ref _state, value); }
         }
         #endregion
 

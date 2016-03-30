@@ -18,6 +18,21 @@ namespace AppBootContexts
 
             HasRequired(fd => fd.FileInfo).WithOptional(fi => fi.FileData).WillCascadeOnDelete();
             HasKey(fd => fd.FileInfoId);
+
+            MapToStoredProcedures(s =>
+            {
+                s.Insert(i => i.HasName("InsertFileData")
+                               .Parameter(f => f.Data, "Data")
+                               .Parameter(f => f.Hash, "Hash")
+                               .Parameter(f => f.Size, "Size"));
+                s.Update(u => u.HasName("UpdateFileData")
+                               .Parameter(f => f.FileInfoId, "FileInfoId")
+                               .Parameter(f => f.Data, "Data")
+                               .Parameter(f => f.Hash, "Hash")
+                               .Parameter(f => f.Size, "Size"));
+                s.Delete(d => d.HasName("DeleteFileData")
+                               .Parameter(f => f.FileInfoId, "FileInfoId"));
+            });
         }
         #endregion
     }

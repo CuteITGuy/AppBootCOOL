@@ -25,35 +25,23 @@ namespace AppBootContexts
             Property(p => p.ModifiedOn).HasColumnOrder(270);
             Property(p => p.ApplicationId).HasColumnOrder(290);
 
-            MapToStoredProcedures(
-                s =>
-                {
-                    s.Insert(i => i.HasName("InsertFileInfo", "dbo")
-                                   .Parameter(f => f.Name, "Name")
-                                   .Parameter(f => f.Directory, "Directory")
-                                   .Parameter(f => f.Extension, "Extension")
-                                   .Parameter(f => f.Description, "Description")
-                                   .Parameter(f => f.IsInit, "IsInit")
-                                   .Parameter(f => f.ApplicationId, "ApplicationId")
-                                   .Parameter(f => f.Version.Major, "MajorVersion")
-                                   .Parameter(f => f.Version.Minor, "MinorVersion")
-                                   .Parameter(f => f.Version.Build, "BuildVersion")
-                                   .Parameter(f => f.Version.Revision, "RevisionVersion"));
-                    s.Update(u => u.HasName("UpdateFileInfo", "dbo")
-                                   .Parameter(f => f.Id, "Id")
-                                   .Parameter(f => f.Name, "Name")
-                                   .Parameter(f => f.Directory, "Directory")
-                                   .Parameter(f => f.Extension, "Extension")
-                                   .Parameter(f => f.Description, "Description")
-                                   .Parameter(f => f.IsInit, "IsInit")
-                                   .Parameter(f => f.ApplicationId, "ApplicationId")
-                                   .Parameter(f => f.Version.Major, "MajorVersion")
-                                   .Parameter(f => f.Version.Minor, "MinorVersion")
-                                   .Parameter(f => f.Version.Build, "BuildVersion")
-                                   .Parameter(f => f.Version.Revision, "RevisionVersion"));
-                    s.Delete(d => d.HasName("DeleteFileInfo", "dbo")
-                                   .Parameter(f => f.Id, "Id"));
-                });
+            HasOptional(fi => fi.FileData).WithRequired(fd => fd.FileInfo).WillCascadeOnDelete();
+
+            MapToStoredProcedures(s =>
+            {
+                s.Insert(i => i.HasName("InsertFileInfo", "dbo")
+                               .Parameter(f => f.Version.Major, "MajorVersion")
+                               .Parameter(f => f.Version.Minor, "MinorVersion")
+                               .Parameter(f => f.Version.Build, "BuildVersion")
+                               .Parameter(f => f.Version.Revision, "RevisionVersion"));
+                s.Update(u => u.HasName("UpdateFileInfo", "dbo")
+                               .Parameter(f => f.ApplicationId, "ApplicationId")
+                               .Parameter(f => f.Version.Major, "MajorVersion")
+                               .Parameter(f => f.Version.Minor, "MinorVersion")
+                               .Parameter(f => f.Version.Build, "BuildVersion")
+                               .Parameter(f => f.Version.Revision, "RevisionVersion"));
+                s.Delete(d => d.HasName("DeleteFileInfo", "dbo"));
+            });
         }
         #endregion
     }

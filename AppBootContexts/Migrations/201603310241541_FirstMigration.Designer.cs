@@ -7,13 +7,13 @@ namespace AppBootContexts.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
-    public sealed partial class AddFileDataAndApplicationStoreProcedures : IMigrationMetadata
+    public sealed partial class FirstMigration : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(AddFileDataAndApplicationStoreProcedures));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(FirstMigration));
         
         string IMigrationMetadata.Id
         {
-            get { return "201603300502214_AddFileDataAndApplicationStoreProcedures"; }
+            get { return "201603310241541_FirstMigration"; }
         }
         
         string IMigrationMetadata.Source

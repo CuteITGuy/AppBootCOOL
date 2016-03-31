@@ -10,7 +10,6 @@ namespace AppBootContexts.Migrations
         public Configuration()
         {
             AutomaticMigrationsEnabled = false;
-            ContextKey = "AppBootContexts.AppBootContext";
         }
 
         protected override void Seed(AppBootContexts.AppBootContext context)

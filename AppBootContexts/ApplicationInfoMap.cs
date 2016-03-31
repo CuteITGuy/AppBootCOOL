@@ -23,17 +23,9 @@ namespace AppBootContexts
 
             MapToStoredProcedures(s =>
             {
-                s.Insert(i => i.HasName("InsertApplication")
-                               .Parameter(a => a.Name, "Name")
-                               .Parameter(a => a.Directory, "Directory")
-                               .Parameter(a => a.Description, "Description"));
-                s.Update(u => u.HasName("UpdateApplication")
-                               .Parameter(a => a.Id, "Id")
-                               .Parameter(a => a.Name, "Name")
-                               .Parameter(a => a.Directory, "Directory")
-                               .Parameter(a => a.Description, "Description"));
-                s.Delete(d => d.HasName("DeleteApplication")
-                               .Parameter(a => a.Id, "Id"));
+                s.Insert(i => i.HasName("InsertApplication", "dbo"));
+                s.Update(u => u.HasName("UpdateApplication", "dbo"));
+                s.Delete(d => d.HasName("DeleteApplication", "dbo"));
             });
         }
         #endregion

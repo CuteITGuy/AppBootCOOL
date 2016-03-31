@@ -5,6 +5,7 @@ using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
 using AppBootModels;
 using FileInfo = AppBootModels.FileInfo;
 
@@ -14,40 +15,40 @@ namespace AppBootViewModels
     public class AppBootViewModel: AppBootViewModelBase
     {
         #region Fields
-        private const string CHECKING = "Check for updates...";
+        private const string CHECKING = "Checking for updates...";
+        private const string STARTING = "Starting program";
         private const string UPDATING = "Updating...";
-        private ICollection<FileUpdate> _fileUpdates = new ObservableCollection<FileUpdate>();
+        private readonly object _locker = new object();
         #endregion
 
 
         #region  Properties & Indexers
-        public ICollection<FileUpdate> FileUpdates
-        {
-            get { return _fileUpdates; }
-            private set { SetProperty(ref _fileUpdates, value); }
-        }
+        public ICollection<FileUpdate> FileUpdates { get; } = new ObservableCollection<FileUpdate>();
         #endregion
 
 
         #region Methods
-        public async Task Boot()
+        public async Task BootAsync()
         {
             State = CHECKING;
             try
             {
                 var appId = GetAppId();
-                var app = await _context.Applications.FindAsync(appId);
-                foreach (var fileInfo in app.Files.AsEnumerable().Where(IsUpdated))
+                using (var context = CreateDataContext())
                 {
-                    FileUpdates.Add(new FileUpdate { Info = fileInfo, State = UpdateState.Pending });
-                }
+                    var app = await context.Applications.FindAsync(appId);
 
-                State = UPDATING;
-                var count = 0;
-                FileUpdates.AsParallel().ForAll(f =>
-                {
-                    
-                });
+                    foreach (var fileInfo in app.Files.AsEnumerable().Where(IsUpdated))
+                    {
+                        FileUpdates.Add(new FileUpdate { Info = fileInfo, State = UpdateState.Pending });
+                    }
+
+                    State = UPDATING;
+                    await UpdateAsync();
+                    State = STARTING;
+                    await WaitToClose();
+                    app.Files.FirstOrDefault(f => f.IsInit)?.Start();
+                }
             }
             catch (Exception exception)
             {
@@ -68,6 +69,52 @@ namespace AppBootViewModels
             var currentFile = file.Directory + file.Name;
             return !File.Exists(currentFile) || !file.Version.HasVersion ||
                    file.Version.CompareTo(FileInfo.GetFileVersion(currentFile)) > 0;
+        }
+
+        private void Update()
+        {
+            var count = 0.0;
+            FileUpdates.AsParallel().ForAll(f =>
+            {
+                Update(f);
+                lock (_locker)
+                {
+                    ++count;
+                    Progress = count / FileUpdates.Count;
+                }
+            });
+        }
+
+        private void Update(FileUpdate fileUpdate)
+        {
+            fileUpdate.State = UpdateState.Updating;
+            try
+            {
+                using (var context = CreateDataContext())
+                {
+                    var fileData = context.FileDatas.Find(fileUpdate.Info.Id);
+
+                    if (fileData == null || !fileData.CheckData())
+                    {
+                        fileUpdate.State = UpdateState.Corrupted;
+                        return;
+                    }
+                    File.WriteAllBytes(fileUpdate.Info.GetFilePath(), fileData.Data);
+                    fileUpdate.State = UpdateState.Updated;
+                }
+            }
+            catch
+            {
+                fileUpdate.State = UpdateState.Failed;
+            }
+        }
+
+        private async Task UpdateAsync() => await Task.Run(() => Update());
+
+        private static async Task WaitToClose()
+        {
+            await Task.Delay(2000);
+            Application.Current.MainWindow.Close();
         }
         #endregion
     }

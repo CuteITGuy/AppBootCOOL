@@ -3,7 +3,7 @@
 
 namespace AppBootContexts
 {
-    public class AppBootContextInitializer: DropCreateDatabaseIfModelChanges<AppBootContext>
+    public class AppBootContextInitializer: DropCreateDatabaseAlways<AppBootContext>
     {
         #region Override
         protected override void Seed(AppBootContext context)

@@ -3,8 +3,9 @@
     public enum UpdateState
     {
         Pending,
-        Running,
+        Updating,
         Updated,
+        Corrupted,
         Failed
     }
 }

@@ -54,16 +54,22 @@ namespace AppBootViewModels
         protected override async Task LoadAsync()
         {
             SetEnability(false);
-            await _context.Applications.ToListAsync();
-            Applications = _context.Applications.Local;
+            using (var context = CreateDataContext())
+            {
+                await context.Applications.ToListAsync();
+                Applications = context.Applications.Local;
+            }
             SetEnability(true);
         }
 
         protected override async Task SaveAsync()
         {
             SetEnability(false);
-            await _context.SaveChangesAsync();
-            await _context.Applications.ToListAsync();
+            using (var context = CreateDataContext())
+            {
+                await context.SaveChangesAsync();
+                await context.Applications.ToListAsync();
+            }
             SetEnability(true);
         }
 

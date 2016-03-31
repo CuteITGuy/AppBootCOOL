@@ -116,6 +116,23 @@ namespace AppBootModels
         #endregion
 
 
+        #region Methods
+        public static FileVersion GetFileVersion(string filePath)
+        {
+            var fileVersionInfo = FileVersionInfo.GetVersionInfo(filePath);
+            return new FileVersion(fileVersionInfo.FileVersion);
+        }
+
+        //private string _version;
+        public string GetFilePath() => Path.Combine(Directory, Name);
+
+        public void Start()
+        {
+            Process.Start(GetFilePath());
+        }
+        #endregion
+
+
         #region Implementation
         private static string GetRelativePath(string rootDirectory, string mainDirectory)
         {
@@ -124,11 +141,6 @@ namespace AppBootModels
             var rootUri = new Uri(rootDirectory);
             var mainUri = new Uri(mainDirectory);
             return Uri.UnescapeDataString(rootUri.MakeRelativeUri(mainUri).ToString().Replace("/", "\\"));
-        }
-        public static FileVersion GetFileVersion(string filePath)
-        {
-            var fileVersionInfo = FileVersionInfo.GetVersionInfo(filePath);
-            return new FileVersion(fileVersionInfo.FileVersion);
         }
 
         private void SetDataFrom(string filePath, string appFolder)
@@ -139,8 +151,5 @@ namespace AppBootModels
             Version = GetFileVersion(filePath);
         }
         #endregion
-
-
-        //private string _version;
     }
 }

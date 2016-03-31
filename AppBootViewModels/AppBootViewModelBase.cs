@@ -1,13 +1,13 @@
-﻿using System;
-using AppBootContexts;
+﻿using AppBootContexts;
 using CB.Model.Common;
 
 
 namespace AppBootViewModels
 {
-    public abstract class AppBootViewModelBase: ViewModelBase, IDisposable
+    public abstract class AppBootViewModelBase: ViewModelBase /*, IDisposable*/
     {
-        #region Fields
+        #region Methods
+        /*#region Fields
         protected readonly AppBootContext _context = new AppBootContext();
         #endregion
 
@@ -17,6 +17,9 @@ namespace AppBootViewModels
         {
             _context.Dispose();
         }
+        #endregion*/
+
+        public AppBootContext CreateDataContext() => new AppBootContext();
         #endregion
     }
 }

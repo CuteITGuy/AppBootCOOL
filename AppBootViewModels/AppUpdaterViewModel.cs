@@ -53,6 +53,7 @@ namespace AppBootViewModels
         {
             var openDialog = new OpenFileDialog
             {
+                InitialDirectory = Application.Directory,
                 Multiselect = true,
                 ShowReadOnly = true,
             };
@@ -68,15 +69,21 @@ namespace AppBootViewModels
         protected override async Task LoadAsync()
         {
             SetEnability(false);
-            Application = await _context.Applications.FindAsync(ApplicationId);
-            await Task.Run(() => Files = Application.Files.ToList());
+            using (var context = CreateDataContext())
+            {
+                Application = await context.Applications.FindAsync(ApplicationId);
+                await Task.Run(() => Files = Application.Files.ToList());
+            }
             SetEnability(true);
         }
 
         protected override async Task SaveAsync()
         {
             SetEnability(false);
-            await _context.SaveChangesAsync();
+            using (var context = CreateDataContext())
+            {
+                await context.SaveChangesAsync();
+            }
             SetEnability(true);
         }
 

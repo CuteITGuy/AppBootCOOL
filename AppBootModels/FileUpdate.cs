@@ -7,7 +7,7 @@ namespace AppBootModels
     {
         #region Fields
         private FileInfo _info;
-        private UpdateState _state;
+        private UpdateState _state = UpdateState.Pending;
         #endregion
 
 

@@ -99,11 +99,11 @@ namespace AppBootViewModels
                         fileUpdate.State = UpdateState.Corrupted;
                         return;
                     }
-                    File.WriteAllBytes(fileUpdate.Info.GetFilePath(), fileData.Data);
+                    WriteFile(fileUpdate.Info, fileData);
                     fileUpdate.State = UpdateState.Updated;
                 }
             }
-            catch
+            catch (Exception exception)
             {
                 fileUpdate.State = UpdateState.Failed;
             }
@@ -115,6 +115,12 @@ namespace AppBootViewModels
         {
             await Task.Delay(2000);
             Application.Current.MainWindow.Close();
+        }
+
+        private static void WriteFile(FileInfo fileInfo, FileData fileData)
+        {
+            if (Directory.Exists(fileInfo.Directory)) Directory.CreateDirectory(fileInfo.Directory);
+            File.WriteAllBytes(fileInfo.GetFilePath(), fileData.Data);
         }
         #endregion
     }

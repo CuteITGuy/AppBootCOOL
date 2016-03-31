@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using AppBootContexts;
 using AppBootModels;
 using Microsoft.Win32;
 
@@ -16,6 +17,7 @@ namespace AppBootViewModels
         private int _applicationId;
         private bool _canAddFiles;
         private ICollection<FileInfo> _files;
+        private readonly AppBootContext _context = CreateDataContext();
         #endregion
 
 
@@ -69,21 +71,15 @@ namespace AppBootViewModels
         protected override async Task LoadAsync()
         {
             SetEnability(false);
-            using (var context = CreateDataContext())
-            {
-                Application = await context.Applications.FindAsync(ApplicationId);
-                await Task.Run(() => Files = Application.Files.ToList());
-            }
+            Application = await _context.Applications.FindAsync(ApplicationId);
+            await Task.Run(() => Files = Application.Files.ToList());
             SetEnability(true);
         }
 
         protected override async Task SaveAsync()
         {
             SetEnability(false);
-            using (var context = CreateDataContext())
-            {
-                await context.SaveChangesAsync();
-            }
+            await _context.SaveChangesAsync();
             SetEnability(true);
         }
 

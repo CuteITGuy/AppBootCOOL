@@ -19,7 +19,7 @@ namespace AppBootViewModels
         }
         #endregion*/
 
-        public AppBootContext CreateDataContext() => new AppBootContext();
+        public static AppBootContext CreateDataContext() => new AppBootContext();
         #endregion
     }
 }

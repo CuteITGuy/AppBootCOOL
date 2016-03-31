@@ -3,6 +3,7 @@ using System.Data.Entity;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Input;
+using AppBootContexts;
 using AppBootModels;
 
 
@@ -13,8 +14,8 @@ namespace AppBootViewModels
         #region Fields
         private ICommand _addApplicationCommand;
         private ICollection<ApplicationInfo> _applications;
-
         private bool _canAddApplication;
+        private readonly AppBootContext _context = CreateDataContext();
         #endregion
 
 
@@ -54,22 +55,16 @@ namespace AppBootViewModels
         protected override async Task LoadAsync()
         {
             SetEnability(false);
-            using (var context = CreateDataContext())
-            {
-                await context.Applications.ToListAsync();
-                Applications = context.Applications.Local;
-            }
+            await _context.Applications.ToListAsync();
+            Applications = _context.Applications.Local;
             SetEnability(true);
         }
 
         protected override async Task SaveAsync()
         {
             SetEnability(false);
-            using (var context = CreateDataContext())
-            {
-                await context.SaveChangesAsync();
-                await context.Applications.ToListAsync();
-            }
+            await _context.SaveChangesAsync();
+            await _context.Applications.ToListAsync();
             SetEnability(true);
         }
 

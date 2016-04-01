@@ -126,6 +126,8 @@ namespace AppBootModels
         //private string _version;
         public string GetFilePath() => Path.Combine(Directory, Name);
 
+        public string GetFullPath() => Path.GetFullPath(GetFilePath());
+
         public void Start()
         {
             Process.Start(GetFilePath());

@@ -9,8 +9,8 @@ namespace AppBootContexts
         #region Abstract
         void DeleteFile(FileInfo file);
         Task DeleteFileAsync(FileInfo file);
-        FileInfo[] GetFiles(int appId);
-        Task<FileInfo[]> GetFilesAsync(int appId);
+        FileInfo[] GetFiles(int applicationId);
+        Task<FileInfo[]> GetFilesAsync(int applicationId);
         FileInfo SaveFile(FileInfo file);
         Task<FileInfo> SaveFileAsync(FileInfo file);
         #endregion

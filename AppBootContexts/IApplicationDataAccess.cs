@@ -10,7 +10,7 @@ namespace AppBootContexts
         void DeleteApplication(ApplicationInfo application);
         Task DeleteApplicationAsync(ApplicationInfo application);
         ApplicationInfo GetApplication(int id);
-        Task<ApplicationInfo> GetApplicationAsync(int id);
+        Task<ApplicationInfo> GetApplicationAsync(int applicationId);
         ApplicationInfo[] GetApplications();
         Task<ApplicationInfo[]> GetApplicationsAsync();
         ApplicationInfo SaveApplication(ApplicationInfo application);

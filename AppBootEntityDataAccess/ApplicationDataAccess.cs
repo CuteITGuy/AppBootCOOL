@@ -1,4 +1,5 @@
-﻿using System;
+﻿using System.Data.Entity;
+using System.Linq;
 using System.Threading.Tasks;
 using AppBootContexts;
 using AppBootModels;
@@ -8,44 +9,94 @@ namespace AppBootEntityDataAccess
 {
     public class ApplicationDataAccess: IApplicationDataAccess
     {
+        #region Methods
         public void DeleteApplication(ApplicationInfo application)
         {
-            throw new NotImplementedException();
+            using (var context = new AppBootContext())
+            {
+                context.Applications.Remove(application);
+                context.SaveChanges();
+            }
         }
 
-        public Task DeleteApplicationAsync(ApplicationInfo application)
+        public async Task DeleteApplicationAsync(ApplicationInfo application)
         {
-            throw new NotImplementedException();
+            using (var context = new AppBootContext())
+            {
+                context.Applications.Remove(application);
+                await context.SaveChangesAsync();
+            }
         }
 
-        public ApplicationInfo GetApplication(int id)
+        public ApplicationInfo GetApplication(int applicationId)
         {
-            throw new NotImplementedException();
+            using (var context = new AppBootContext())
+            {
+                return context.Applications.Find(applicationId);
+            }
         }
 
-        public Task<ApplicationInfo> GetApplicationAsync(int id)
+        public async Task<ApplicationInfo> GetApplicationAsync(int applicationId)
         {
-            throw new NotImplementedException();
+            using (var context = new AppBootContext())
+            {
+                return await context.Applications.FindAsync(applicationId);
+            }
         }
 
         public ApplicationInfo[] GetApplications()
         {
-            throw new NotImplementedException();
+            using (var context = new AppBootContext())
+            {
+                context.Applications.Load();
+                return context.Applications.Local.ToArray();
+            }
         }
 
-        public Task<ApplicationInfo[]> GetApplicationsAsync()
+        public async Task<ApplicationInfo[]> GetApplicationsAsync()
         {
-            throw new NotImplementedException();
+            using (var context = new AppBootContext())
+            {
+                await context.Applications.LoadAsync();
+                return context.Applications.Local.ToArray();
+            }
         }
 
         public ApplicationInfo SaveApplication(ApplicationInfo application)
         {
-            throw new NotImplementedException();
+            using (var context = new AppBootContext())
+            {
+                var app = context.Applications.Find(application.Id);
+                if (app != null)
+                {
+                    app.CopyFrom(application, false);
+                    context.SaveChanges();
+                    return app;
+                }
+
+                context.Applications.Add(application);
+                context.SaveChanges();
+                return application;
+            }
         }
 
-        public Task<ApplicationInfo> SaveApplicationAsync(ApplicationInfo application)
+        public async Task<ApplicationInfo> SaveApplicationAsync(ApplicationInfo application)
         {
-            throw new NotImplementedException();
+            using (var context = new AppBootContext())
+            {
+                var app = await context.Applications.FindAsync(application.Id);
+                if (app != null)
+                {
+                    app.CopyFrom(application, false);
+                    await context.SaveChangesAsync();
+                    return app;
+                }
+
+                context.Applications.Add(application);
+                await context.SaveChangesAsync();
+                return application;
+            }
         }
+        #endregion
     }
 }

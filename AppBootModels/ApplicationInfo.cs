@@ -73,6 +73,16 @@ namespace AppBootModels
 
 
         #region Methods
+        public void CopyFrom(ApplicationInfo application, bool includeId = true)
+        {
+            Name = application.Name;
+            Directory = application.Directory;
+            Description = application.Description;
+            CreatedOn = application.CreatedOn;
+            ModifiedOn = application.ModifiedOn;
+            if (includeId) Id = application.Id;
+        }
+
         public void SetFiles(ICollection<FileInfo> files)
         {
             for (var i = 0; i < Files.Count;)

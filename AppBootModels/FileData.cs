@@ -75,6 +75,16 @@ namespace AppBootModels
         {
             return Data.Length == Size && EqualsHash(Data, Hash);
         }
+
+        public void CopyFrom(FileData fileData, bool includeId)
+        {
+            Data = fileData.Data;
+            FileInfo = fileData.FileInfo;
+            Hash = fileData.Hash;
+            Size = fileData.Size;
+
+            if (includeId) FileInfoId = fileData.FileInfoId;
+        }
         #endregion
 
 

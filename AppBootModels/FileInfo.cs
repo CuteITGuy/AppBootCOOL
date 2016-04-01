@@ -153,5 +153,23 @@ namespace AppBootModels
             Version = GetFileVersion(filePath);
         }
         #endregion
+
+
+        public void CopyFrom(FileInfo fileInfo, bool includeId = true)
+        {
+            Application = fileInfo.Application;
+            ApplicationId = fileInfo.ApplicationId;
+            Name = fileInfo.Name;
+            Directory = fileInfo.Directory;
+            Description = fileInfo.Description;
+            Extension = fileInfo.Extension;
+            Version = fileInfo.Version;
+            FileData = fileInfo.FileData;
+            IsInit = fileInfo.IsInit;
+            CreatedOn = fileInfo.CreatedOn;
+            ModifiedOn = fileInfo.ModifiedOn;
+
+            if (includeId) Id = fileInfo.Id;
+        }
     }
 }

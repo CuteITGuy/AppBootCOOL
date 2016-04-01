@@ -74,7 +74,12 @@ namespace AppBootViewModels
         private void Update()
         {
             var count = 0.0;
-            FileUpdates.AsParallel().ForAll(f =>
+            foreach (var fileUpdate in FileUpdates)
+            {
+                Update(fileUpdate);
+            }
+
+            /*FileUpdates.AsParallel().ForAll(f =>
             {
                 Update(f);
                 lock (_locker)
@@ -82,10 +87,10 @@ namespace AppBootViewModels
                     ++count;
                     Progress = count / FileUpdates.Count;
                 }
-            });
+            });*/
         }
 
-        private void Update(FileUpdate fileUpdate)
+        private static void Update(FileUpdate fileUpdate)
         {
             fileUpdate.State = UpdateState.Updating;
             try
@@ -119,7 +124,11 @@ namespace AppBootViewModels
 
         private static void WriteFile(FileInfo fileInfo, FileData fileData)
         {
-            if (Directory.Exists(fileInfo.Directory)) Directory.CreateDirectory(fileInfo.Directory);
+            var directory = Path.GetFullPath(fileInfo.Directory);
+            if (!Directory.Exists(directory))
+            {
+                Directory.CreateDirectory(directory);
+            }
             File.WriteAllBytes(fileInfo.GetFilePath(), fileData.Data);
         }
         #endregion

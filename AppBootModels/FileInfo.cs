@@ -140,14 +140,14 @@ namespace AppBootModels
             if (!mainDirectory.EndsWith("\\")) mainDirectory += "\\";
             var rootUri = new Uri(rootDirectory);
             var mainUri = new Uri(mainDirectory);
-            return Uri.UnescapeDataString(rootUri.MakeRelativeUri(mainUri).ToString().Replace("/", "\\"));
+            return Uri.UnescapeDataString(rootUri.MakeRelativeUri(mainUri).ToString().Trim('/').Replace("/", "\\"));
         }
 
         private void SetDataFrom(string filePath, string appFolder)
         {
             Name = Path.GetFileName(filePath);
             Extension = Path.GetExtension(filePath);
-            Directory = GetRelativePath(appFolder, Path.GetDirectoryName(filePath)); //UNDONE
+            Directory = GetRelativePath(appFolder, Path.GetDirectoryName(filePath));
             Version = GetFileVersion(filePath);
         }
         #endregion
